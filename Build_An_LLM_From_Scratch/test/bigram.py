@@ -1,3 +1,5 @@
+from lib2to3.pgen2 import grammar
+from syslog import LOG_SYSLOG
 text = """
 the king loved the queen and the queen loved the king
 the king loved playing cricket in the garden
@@ -80,3 +82,11 @@ def generating_token(start_word,num_word=20):
 print("text gererated by the Bigram Model:")
 for i in range(5):
     print(f"{i+1} {generating_token('the',5)}")
+
+
+# drawbacks
+
+# measing loss
+# grammar broken at time 
+# cannot generate the word that dont know 
+# lack the memory of the context 
