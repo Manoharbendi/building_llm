@@ -32,6 +32,26 @@ def build_ngram_model(word,n):
             count[context][target]=0#this for the ##### count ={"the:"{king=1,game=1}} this gonna create the side one 
         count[context][target]+=1#for the increment the value in the {king=2,game=1} if the value get again and again
 
-    return count
+    probs = {}
+    for context in count:
+        total = sum(count[context].values())
+        probs[context] = {}
+        for target in count[context]:
+            probs[context][target] = count[context][target] / total
+    return probs
 
-print(build_ngram_model(word,4))
+# the below one is for calculating the probabilty
+bigram = build_ngram_model(word, 2)
+trigram = build_ngram_model(word, 3)
+fourgram = build_ngram_model(word, 4)
+
+print("bigram - after - loved:")
+for w, p in sorted(bigram[("loved",)].items(), key=lambda x: -x[1])[:5]:
+    print(f" {w}: {p:.1%}")
+
+print("trigram - after - king ,loved:")
+if ("king", "loved") in trigram:
+    for w, p in sorted(trigram[("king", "loved")].items(), key=lambda x: -x[1])[:5]:
+        print(f" {w}: {p:.1%}")
+
+# print(build_ngram_model(word,4))
