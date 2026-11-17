@@ -45,13 +45,44 @@ bigram = build_ngram_model(word, 2)
 trigram = build_ngram_model(word, 3)
 fourgram = build_ngram_model(word, 4)
 
-print("bigram - after - loved:")
-for w, p in sorted(bigram[("loved",)].items(), key=lambda x: -x[1])[:5]:
-    print(f" {w}: {p:.1%}")
+# print("bigram - after - loved:")
+# for w, p in sorted(bigram[("loved",)].items(), key=lambda x: -x[1])[:5]:
+#     print(f" {w}: {p:.1%}")
 
-print("trigram - after - king ,loved:")
-if ("king", "loved") in trigram:
-    for w, p in sorted(trigram[("king", "loved")].items(), key=lambda x: -x[1])[:5]:
-        print(f" {w}: {p:.1%}")
+# print("trigram - after - king ,loved:")
+# if ("king", "loved") in trigram:
+#     for w, p in sorted(trigram[("king", "loved")].items(), key=lambda x: -x[1])[:5]:
+#         print(f" {w}: {p:.1%}")
 
 # print(build_ngram_model(word,4))
+
+import random
+
+def generating_ngram(model,n,start_word,num_word=10):
+    output=list(start_word)
+
+    for _ in range (num_word):
+        context=tuple(output[-(n-1):])
+        if context not in model:
+            break
+        options = list(model[context].keys())
+        probs=list(model[context].values())
+
+        next_word= random.choices(options,weights=probs,k=1)[0]
+        output.append(next_word)
+    return " ".join(output)
+
+print("bigram output")
+for i in range(3):
+    print(f"{generating_ngram(bigram,2,['the'])}")
+
+print("trigram output")
+for i in range(3):
+    print(f"{generating_ngram(trigram,3,['the','king'])}")
+
+print("fourgram output")
+for i in range(3):
+    print(f"{generating_ngram(fourgram,4,['the','king','loved'])}")
+
+# problem
+# the above n gram cannot generates the test and there meanings 
