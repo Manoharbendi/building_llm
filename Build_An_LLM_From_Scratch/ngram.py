@@ -86,3 +86,7 @@ for i in range(3):
 
 # problem
 # the above n gram cannot generates the test and there meanings 
+
+# similarity
+# ngram is failing , no matter what we keep the value of n as it is unable to cater to similarity between words
+# we know that the king is simial to the queen,but for the gram models , this just a string, no meaning  
