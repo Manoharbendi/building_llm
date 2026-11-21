@@ -45,6 +45,7 @@ for i in range(vocab_size):
 loop_time = time .time() - start
 # print(f"the loop time is :{loop_time}")#the loop time is :187.49529194831848
 
+
 # start=time.time 
 # score_fast=vocabulary@requirement
 # matrix_time=time.time()-start
