@@ -21,8 +21,9 @@ The prince loved playing cricket with the knight.
 The princess loved playing chess with the sage.
 """
 
+################################
 words =corpus.lower().split()
-print(f"total word in the corpus:{len(words)}")
+# print(f"total word in the corpus:{len(words)}")
 # print(f"print first 20 words :{words[:20]}")
 
 vocab=sorted(set(words))#this because we using the set for the unique words to collection
@@ -46,5 +47,16 @@ def create_training_pair(words,window_size):
     for center_pos in range (len(words)):
         center_idx=word_to_idx[words[center_pos]]#now this for finding the value of the center index using this value we gonna get the after two words and befor two words with the help of the window size 
 
-        window_start=max(0,center_pos - WINDOW_SIZE)# this for not getting the negative value means if the value 0 than there migh be the chanes of getting the -1 ,-2 like that which may cause the wrong output 
-        window_end=min(len(words),center_pos+WINDOW_SIZE)# this for  not exeding the max value which may occures to the errors 
+        window_start=max(0,center_pos - window_size)# this for not getting the negative value means if the value 0 than there migh be the chanes of getting the -1 ,-2 like that which may cause the wrong output 
+        window_end=min(len(words),center_pos+window_size)# this for  not exeding the max value which may occures to the errors 
+
+        for neighbor_pos in range (window_start,window_end):
+            if neighbor_pos != center_pos:
+                neighbor_idx=word_to_idx[words[neighbor_pos]]
+                pairs.append((center_idx,neighbor_idx))#this for making the pairs of the value and there index postion for example if there the word then after that next word will taken and make them as the pair 
+    return pairs
+
+training_pairs=create_training_pair(words,WINDOW_SIZE) 
+# print(f"training pairs{training_pairs}")#we will get the pairs of words with respect to there index postion
+# print(idx_to_word[43])
+# print(word_to_idx["sage"])
