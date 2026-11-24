@@ -1,0 +1,50 @@
+corpus = """
+The king sat on the throne in the grand palace.
+The king wore a golden crown on his head.
+The queen wore a silver crown on her head.
+The king ruled the kingdom with great wisdom.
+The queen ruled the kingdom with great grace.
+The king loved playing cricket in the garden.
+The queen loved playing chess in the palace.
+The prince trained with the knight every morning.
+The queen sat on the throne beside the king.
+The knight protected the king and the queen.
+The people loved the king and the queen dearly.
+The princess studied with the sage every evening.
+The sage advised the king and the queen wisely.
+The kingdom had a beautiful garden and a grand palace.
+The crown was the symbol of the great kingdom.
+The king walked through the garden every evening.
+The queen walked through the palace every morning.
+The knight and the sage served the kingdom faithfully.
+The prince loved playing cricket with the knight.
+The princess loved playing chess with the sage.
+"""
+
+words =corpus.lower().split()
+print(f"total word in the corpus:{len(words)}")
+# print(f"print first 20 words :{words[:20]}")
+
+vocab=sorted(set(words))#this because we using the set for the unique words to collection
+vocab_size=len(vocab)
+# print(vocab_size)
+
+# dictionary for quick access
+word_to_idx={word:idx for idx,word in enumerate(vocab)}#this code and the below code are for the giving the index postion to the word which will be easy for finding the word
+idx_to_word={idx:word for idx,word in enumerate(vocab)}
+
+# for i,word in enumerate (vocab):
+#     print(f"{i:3d}:{word}")
+# print(idx_to_word[45])
+# print(word_to_idx["sat"])
+
+# now the below code id for the making the pair between the word in the numbers
+WINDOW_SIZE=2
+
+def create_training_pair(words,window_size):
+    pairs=[]#all the pair we are making as theh list
+    for center_pos in range (len(words)):
+        center_idx=word_to_idx[words[center_pos]]#now this for finding the value of the center index using this value we gonna get the after two words and befor two words with the help of the window size 
+
+        window_start=max(0,center_pos - WINDOW_SIZE)# this for not getting the negative value means if the value 0 than there migh be the chanes of getting the -1 ,-2 like that which may cause the wrong output 
+        window_end=min(len(words),center_pos+WINDOW_SIZE)# this for  not exeding the max value which may occures to the errors 
