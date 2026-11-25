@@ -1,4 +1,5 @@
 import numpy as np
+import random
 corpus = """
 The king sat on the throne in the grand palace.
 The king wore a golden crown on his head.
@@ -75,8 +76,8 @@ np.random.seed(42)
 vectors=np.random.randn(vocab_size,EMBEDDING_DIM)*0.1#this for give the evry value are assined to the word in the vectors 
 
 def cosine_similarity(word1,word2):
-    v1=vectors[word_to_idx[word1]]
-    v2=vectors[word_to_idx[word2]]
+    v1=vectors[word_to_idx[word1]] if isinstance(word1, str) else word1
+    v2=vectors[word_to_idx[word2]] if isinstance(word2, str) else word2
     dot =np.dot(v1,v2)
 
     norm1=np.linalg.norm(v1)
@@ -95,3 +96,60 @@ def sigmoid(x):
     x=np.clip(x,-10,10)    
     return 1/(1+np.exp(-x))
 print(f"{sigmoid(-5):.4f}")
+
+# Training loop 
+print("="*60)
+print("Training Started")
+print("="*60)
+
+for epoch in range(num_epochs):
+    total_loss=0
+
+    random.shuffle(training_pairs)#this getting diffent diffrent values
+
+    for center_idx,neighbor_idx in training_pairs:
+        center_vec=vectors[center_idx]
+        neighbor_vec=vectors[neighbor_idx]
+
+        #step A:how similar are the vectors for the words in the window
+        similarity=np.dot(center_vec,neighbor_vec)
+
+        #step b:high similarity -confidence will be near the value of the 1,else near zero
+        confidence=sigmoid(similarity)
+
+        #step c:how wrong are we ?
+        error =confidence-1
+
+        total_loss+=-np.log(confidence + 1e-10)
+
+        vectors[center_idx]-=learning_rate*error*neighbor_vec
+        vectors[neighbor_idx]-=learning_rate*error*center_vec
+
+        for _ in range (num_negatives):
+            # Pick a random word from the vocabulary
+            neg_idx=random.randint(0,vocab_size-1)
+            neg_vec=vectors[neg_idx]
+
+            neg_similarity=np.dot(center_vec,neg_vec)
+            neg_confidence=sigmoid(neg_similarity)
+
+            neg_error=neg_confidence
+
+            total_loss+=-np.log(1-neg_confidence+ 1e-10)
+
+            vectors[center_idx]-=learning_rate*neg_error*neg_vec
+            vectors[neg_idx]-=learning_rate*neg_error*center_vec
+    if(epoch+1)%10 == 0:
+        avg_loss=total_loss/(len(training_pairs))
+        sim_kq=cosine_similarity('king','queen')
+        sim_kt=cosine_similarity('king','throne')
+        sim_kc=cosine_similarity('king','cricket')
+        sim_gp=cosine_similarity('garden','palace')
+
+        print(f"Epoch {epoch+1}/{num_epochs} - Avg Loss: {avg_loss:.4f}")
+        print(f"queen:   {sim_kq:+.3f} {'█' * int(max(0, sim_kq) * 20)}")
+        print(f"throne:  {sim_kt:+.3f} {'█' * int(max(0, sim_kt) * 20)}")
+        print(f"cricket: {sim_kc:+.3f} {'█' * int(max(0, sim_kc) * 20)}")
+        print(f"palace:  {sim_gp:+.3f} {'█' * int(max(0, sim_gp) * 20)}")
+
+
