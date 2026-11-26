@@ -76,8 +76,21 @@ np.random.seed(42)
 vectors=np.random.randn(vocab_size,EMBEDDING_DIM)*0.1#this for give the evry value are assined to the word in the vectors 
 
 def cosine_similarity(word1,word2):
-    v1=vectors[word_to_idx[word1]] if isinstance(word1, str) else word1
-    v2=vectors[word_to_idx[word2]] if isinstance(word2, str) else word2
+    if isinstance(word1, str):
+        w1 = word1.strip().lower()
+        if w1 not in word_to_idx:
+            return 0
+        v1 = vectors[word_to_idx[w1]]
+    else:
+        v1 = word1
+
+    if isinstance(word2, str):
+        w2 = word2.strip().lower()
+        if w2 not in word_to_idx:
+            return 0
+        v2 = vectors[word_to_idx[w2]]
+    else:
+        v2 = word2
     dot =np.dot(v1,v2)
 
     norm1=np.linalg.norm(v1)
@@ -152,4 +165,29 @@ for epoch in range(num_epochs):
         print(f"cricket: {sim_kc:+.3f} {'█' * int(max(0, sim_kc) * 20)}")
         print(f"palace:  {sim_gp:+.3f} {'█' * int(max(0, sim_gp) * 20)}")
 
+# Training loop 
+print("="*60)
+print("similarity test after Training ")
+print("="*60)
 
+test_pairs = [
+("king", "queen"),
+("king", "throne"),
+("king", "crown"),
+("queen", "princess"),
+("cricket", "chess")
+]
+
+for w1,w2 in test_pairs:
+    sim=cosine_similarity(w1,w2)
+    print(f"{w1:10s}--{w2:10s}{sim:3f}")
+
+def find_most_similar(word,top_n=5):
+    word_vec=vectors[word_to_idx[word]]
+
+    similarity={}
+    for other_word in vocab:
+        if other_word== word:
+            continue
+        other_vec=vectors[word_to_idx[other_word]]
+        dot=np.dot(word_vec,other_vec)
